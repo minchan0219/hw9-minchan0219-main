@@ -25,7 +25,18 @@ let rec search = function
 let rec bad_build_from_sorted = function
   | [] -> Empty
   | (key, value) :: rest ->
-      Node
-        ( (key, value),
-          (left = Empty;
-           right = bad_build_from_sorted rest) )
+      Node (
+        (key, value),
+          {left = Empty;
+           right = bad_build_from_sorted rest});;
+
+
+let rec helper = function
+  | Empty,_,_-> true
+  | Node ((key, _), children), min_bound, max_bound ->
+      let min = children.left 
+      
+      let max = children.right
+
+let check_bst : ('key, 'value) bst = function
+  | tree -> helper (tree, None, None)
