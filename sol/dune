@@ -1,0 +1,3 @@
+(executables
+ (names trees bst_dictionary arg_max benchmark)
+ (libraries src))
