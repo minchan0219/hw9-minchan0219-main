@@ -34,9 +34,15 @@ let rec bad_build_from_sorted = function
 let rec helper = function
   | Empty,_,_-> true
   | Node ((key, _), children), min_bound, max_bound ->
-      let min = children.left 
-      
-      let max = children.right
+      let min = match min_bound with
+        | None -> true
+        | Some min_key -> key > min_key
+      in
+      let max = match max_bound with
+        | None -> true
+        | Some max_key -> key < max_key
+      in
+      helper (children.left, min_bound, )
 
 let check_bst : ('key, 'value) bst = function
   | tree -> helper (tree, None, None)
