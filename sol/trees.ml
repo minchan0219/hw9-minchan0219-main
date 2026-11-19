@@ -43,7 +43,7 @@ let rec helper_1 = function
       && helper_1 (children.left, None, Some key)
       && helper_1 (children.right, Some key, None)
 
-let check_bst = function tree -> helper (tree, None, None);;
+let check_bst = function tree -> helper_1 (tree, None, None);;
 
 check_expect_bool (check_bst Empty, true, "empty check");;
 
@@ -71,9 +71,8 @@ check_expect_bool
     "not built correctly" )
 ;;
 
-(*input: a sorted list consisting of key and value tuples of type ('a, 'b),
-         a 
-   output: a proper bst resulting from the list*)
+(*input: a sorted list consisting of key and value tuples of type ('a, 'b)
+  output: a proper bst resulting from the list*)
 let rec build_from_sorted = function
   | [] -> Empty
   | lst -> (
@@ -87,9 +86,36 @@ let rec build_from_sorted = function
             ( (key, value),
               { left = build_from_sorted lower; right = build_from_sorted rest }
             ))
+;;
+
+check_expect_bool
+  ( check_bst (build_from_sorted [ (1, "a") ]),
+    true,
+    "build_from_sorted: single element" )
+;;
+
+check_expect_bool
+  (check_bst (build_from_sorted [ (1, "a"); (2, "b") ]), true, "two elements")
+;;
+
+check_expect_bool
+  (check_bst (build_from_sorted [ (1, "a"); (2, "b"); (3, "c") ]), true, "odd")
+;;
+
+check_expect_bool
+  ( check_bst (build_from_sorted [ (1, "a"); (2, "b"); (3, "c"); (4, "d") ]),
+    true,
+    "even" )
+;;
+
+check_expect_bool
+  ( check_bst (build_from_sorted [ (-3, "a"); (0, "b"); (5, "c") ]),
+    true,
+    "negative" )
+;;
 
 let rec merge = function
-  | lst, [] -> lst1
+  | lst, [] -> lst
   | [], lst2 -> lst2
   | f1 :: r1, f2 :: r2 ->
       if f1 < f2 then f1 :: merge (r1, f2 :: r2) else f2 :: merge (f1 :: r1, r2)
@@ -100,3 +126,25 @@ let rec mergesort = function
   | lst ->
       let k = List.length lst / 2 in
       merge (mergesort (List.take k lst), mergesort (List.drop k lst))
+
+(*input: an unsorted list consisting of key and value tuples of type ('a, 'b)
+  output: a proper bst resulting from sorting the list and constructing a tree*)
+let build = function [] -> Empty | lst -> build_from_sorted (mergesort lst);;
+
+check_expect_bool (check_bst (build []), true, "empty list");;
+
+check_expect_bool
+  (check_bst (build [ (3, "c"); (1, "a"); (2, "b") ]), true, "unsorted list")
+;;
+
+check_expect_bool
+  ( check_bst (build [ (5, "e"); (1, "a"); (4, "d"); (2, "b"); (3, "c") ]),
+    true,
+    "odd" )
+;;
+
+check_expect_bool
+  ( check_bst
+      (build [ (6, "f"); (2, "b"); (5, "e"); (1, "a"); (4, "d"); (3, "c") ]),
+    true,
+    "even" )

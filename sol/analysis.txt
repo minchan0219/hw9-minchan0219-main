@@ -1,5 +1,13 @@
 2.
-Given a list of length n > 0, 
-
+For nonnegative integer n, where n >= 1, let d(n) be the depth the binary tree resulting from performing build_from_sorted on a list of length n
+d(1) = 1
+d(n) = 1 + d(n/2)
+Therefore, d(n) = log_2 (n)
 
 3.
+For nonnegative integer n, let f(n) be the worst-case running time of performing build_from_sorted on a list of length n
+f(0) = c
+f(n) <= f(n/2) + f(n/2 - 1) + cn + d
+therefore, f(n) <= 2f(n/2) + cn + d
+build_from_sorted on an empty list results in a constant runtime. 
+for a list of length greater than 0, build_from_sorted performs constant runtime operations and calls upon itself twice with inputs of length of half of the current list
