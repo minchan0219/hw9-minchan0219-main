@@ -43,6 +43,9 @@ let rec helper_1 = function
       && helper_1 (children.left, None, Some key)
       && helper_1 (children.right, Some key, None)
 
+(*input: a ('a, 'b) bst
+    output: a boolean indicating whether or not the bst is in proper order
+  *)
 let check_bst = function tree -> helper_1 (tree, None, None);;
 
 check_expect_bool (check_bst Empty, true, "empty check");;
