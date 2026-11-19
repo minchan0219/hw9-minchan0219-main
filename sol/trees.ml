@@ -40,8 +40,8 @@ let rec helper = function
         match max_bound with None -> true | Some max -> key < max
       in
       check_min && check_max
-      && helper (children.left, Some key, None)
-      && helper (children.right, None, Some key)
+      && helper (children.left, None, Some key)
+      && helper (children.right, Some key, None)
 
 let check_bst = function tree -> helper (tree, None, None);;
 
@@ -60,11 +60,12 @@ check_expect_bool
 ;;
 
 check_expect_bool
-  ( check_bst Node
-      ( (10, "root"),
-        {
-          left = Node ((12, "L"), { left = Empty; right = Empty });
-          right = Empty;
-        } ),
+  ( check_bst
+      (Node
+         ( (10, "root"),
+           {
+             left = Node ((12, "L"), { left = Empty; right = Empty });
+             right = Empty;
+           } )),
     false,
     "not built correctly" )
