@@ -1,14 +1,14 @@
 open! Src.Cs17_setup_hw09
 
 let arg_max = function
-  | list, f ->
+  | the_first :: the_rest, f ->
       let rec highest = function
         | [], max -> max
         | first :: rest, max ->
             if f first > f max then highest (rest, first)
             else highest (rest, max)
       in
-      highest (list, -.infinity)
+      highest (the_first :: the_rest, f the_first)
 
 let annual_return = function
   | "fuzzbook" -> 6
