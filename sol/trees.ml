@@ -30,7 +30,7 @@ let rec bad_build_from_sorted = function
 (*input: a ('a, 'b) bst, lower bound, upper bound
     output: a boolean indicating whether or not the bst is in proper order
   *)
-let rec helper = function
+let rec helper_1 = function
   | Empty, _, _ -> true
   | Node ((key, _), children), min_bound, max_bound ->
       let check_min =
@@ -40,8 +40,8 @@ let rec helper = function
         match max_bound with None -> true | Some max -> key < max
       in
       check_min && check_max
-      && helper (children.left, None, Some key)
-      && helper (children.right, Some key, None)
+      && helper_1 (children.left, None, Some key)
+      && helper_1 (children.right, Some key, None)
 
 let check_bst = function tree -> helper (tree, None, None);;
 
@@ -69,3 +69,34 @@ check_expect_bool
            } )),
     false,
     "not built correctly" )
+;;
+
+(*input: a sorted list consisting of key and value tuples of type ('a, 'b),
+         a 
+   output: a proper bst resulting from the list*)
+let rec build_from_sorted = function
+  | [] -> Empty
+  | lst -> (
+      let mid = List.length lst / 2 in
+      let lower = List.take mid lst in
+      let higher = List.drop mid lst in
+      match higher with
+      | [] -> Empty
+      | (key, value) :: rest ->
+          Node
+            ( (key, value),
+              { left = build_from_sorted lower; right = build_from_sorted rest }
+            ))
+
+let rec merge = function
+  | lst, [] -> lst1
+  | [], lst2 -> lst2
+  | f1 :: r1, f2 :: r2 ->
+      if f1 < f2 then f1 :: merge (r1, f2 :: r2) else f2 :: merge (f1 :: r1, r2)
+
+let rec mergesort = function
+  | [] -> []
+  | [ x ] -> [ x ]
+  | lst ->
+      let k = List.length lst / 2 in
+      merge (mergesort (List.take k lst), mergesort (List.drop k lst))
